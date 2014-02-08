@@ -14,7 +14,7 @@
   // Register function
   window.simpleDOM = function(selector){
     return new simpleDOMEngine(selector);
-  }
+  };
   
   var simpleDOMEngine = function(selector){
     
@@ -38,7 +38,7 @@
     
     return this;
     
-  }
+  };
   
   simpleDOMEngine.prototype = {
 
@@ -83,7 +83,7 @@
         if (window.document.readyState == "complete" || window.document.readyState == "loaded"){
           closure();
         }
-      }
+      };
     },
 
 
@@ -216,7 +216,7 @@
         for( var n = 0, l = this.length; n < l; n++ ){
             var newAttr = document.createAttribute(attr);
             newAttr.value = val;
-            this[n].setAttributeNode(newAttr)
+            this[n].setAttributeNode(newAttr);
         }
         return this;
     },
@@ -236,9 +236,9 @@
      */
     removeAttr: function( attr ){
         for( var n = 0, l = this.length; n < l; n++ ){
-            this[n].removeAttribute(attr)
+            this[n].removeAttribute(attr);
         }
         return this;
     }
-  }
+  };
 })(this);
