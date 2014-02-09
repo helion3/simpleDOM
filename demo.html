@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <title>simpleDOM</title>
-    <script src="simpledom.js"></script>
+    <script src="src/simpledom.js"></script>
     <script>
     // Simple no-conflict
     (function($){
@@ -12,9 +12,11 @@
 
         // console.log( $('li') );
 
-        $('li').each(function(key,elem){
-          console.log(key, elem);
-        });
+        // $('li').each(function(key){
+        //   console.log(this, key);
+        // });
+
+        console.log($('li.open').addClass('test'));
 
       });
 
@@ -26,7 +28,7 @@
   <h1>simpleDOM</h1>
 
   <ul id="nav">
-    <li><a href="">test link</a></li>
+    <li class="open"><a href="">test link</a></li>
     <li><a href="">test link</a></li>
     <li><a href="">test link</a></li>
     <li><a href="">test link</a></li>

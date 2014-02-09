@@ -66,7 +66,7 @@
     each: function( closure ){
       if( typeof closure !== "function" ) return false;
       for( var n = 0, l = this.length; n < l; n++ ){
-        closure(n,this[n]);
+        closure.call(this[n],n);
       }
       return this;
     },
@@ -88,6 +88,14 @@
 
 
     /**
+     * Returns an array of existing classes for an element
+     * @param  {[type]} elem [description]
+     * @return {[type]}      [description]
+     */
+    getClasses: function( elem ){
+      return (elem.className !== "" ? elem.className.split(' ') : []);
+    },
+    /**
      * Adds a new CSS class to each element
      *
      * @param className
@@ -95,8 +103,9 @@
      */
     addClass: function( className ){
       for( var n = 0, l = this.length; n < l; n++ ){
-        // @todo fix spaces
-        this[n].className += " " + className;
+        var classes = this.getClasses(this[n]);
+        classes.push(className);
+        this[n].className = classes.join(' ');
       }
       return this;
     },
@@ -140,7 +149,6 @@
      * @returns simpleDOM
      */
     bind: function( eventType, eventHandler ){
-
       for( var n = 0, l = this.length; n < l; n++ ){
         var eventElem = this[n];
         if(eventElem.addEventListener){
