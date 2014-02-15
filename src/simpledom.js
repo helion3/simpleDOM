@@ -28,12 +28,17 @@
       this.ready(selector);
     }
     else if( typeof selector === "string" ){
+      if( 'querySelectorAll' in document ){
         _matches = document.querySelectorAll(this._raw_selector);
-    }
-    
-    this.length = _matches.length;
-    for (var i = 0; i < _matches.length; i++){
-        this[i] = _matches[i];
+      }
+      // For IE7  
+      else {
+        if( selector.indexOf("#") === 0 ){
+          _matches = [ document.getElementById( selector.replace('#','') ) ];
+        } else {
+          _matches = [ document.getElementsByTagName( selector ) ];
+        }
+      }
     }
     
     return this;
@@ -214,39 +219,37 @@
 
 
     /**
-     * Add a new HTML attribute attr with value val
-     *
-     * @param attr
-     * @param val
-     * @returns simpleDOM
-     */
-    addAttr: function( attr, val ){
-        for( var n = 0, l = this.length; n < l; n++ ){
-            var newAttr = document.createAttribute(attr);
-            newAttr.value = val;
-            this[n].setAttributeNode(newAttr);
-        }
-        return this;
-    },
-    /**
      * Returns the current value of an HTML attribute
+     * If second argument provided, it will set the value
+     * or remove the attribute if the value is empty.
      *
      * @param attr
      * @returns {string}
      */
-    attr: function( attr ){
-        return this.get(0).getAttribute(attr);
-    },
-    /**
-     * Removes an HTML attribute
-     * @param attr
-     * @returns simpleDOM
-     */
-    removeAttr: function( attr ){
-        for( var n = 0, l = this.length; n < l; n++ ){
-            this[n].removeAttribute(attr);
+    attr: function( attr, value ){
+      // @todo needs iteration
+      if( value === undefined ){
+        return this[0].getAttribute(attr);
+      } else {
+        var hasAttr = false;
+        if( 'hasAttribute' in this[0] ){
+          hasAttr = this[0].hasAttribute(attr)
+        } else {
+          hasAttr = !(this[0][attr] === undefined);
         }
-        return this;
+        if( hasAttr ){
+          if( value === '' ){
+            this[0].removeAttribute(attr);
+          } else {
+            this[0].setAttribute(attr,value);
+          }
+        } else {
+          var newAttr = document.createAttribute(attr);
+          newAttr.value = val;
+          this[0].setAttributeNode(newAttr);
+        }
+      }
+      return this;
     }
   };
 })(this);
