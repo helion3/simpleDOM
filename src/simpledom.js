@@ -243,9 +243,9 @@
       } else {
         var hasAttr = false;
         if( 'hasAttribute' in this[0] ){
-          hasAttr = this[0].hasAttribute(attr)
+          hasAttr = this[0].hasAttribute(attr);
         } else {
-          hasAttr = !(this[0][attr] === undefined);
+          hasAttr = (this[0][attr] !== undefined);
         }
         if( hasAttr ){
           if( value === '' ){
