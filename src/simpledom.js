@@ -3,21 +3,39 @@
  *
  * @author Mike Botsko
  *
- * Contains methods useful for basic DOM manipulation, built to 
+ * Contains methods useful for basic DOM manipulation, built to
  * mimic jQuery - developers who are familiar with jQuery will
  * have no trouble adapting to this.
  *
  * Works with all browser versions of the past few years.
  */
 (function (window,undefined){
-  
-  // Register function
-  window.simpleDOM = function(selector){
+
+  var _$ = window.$;
+
+  var simpleDOM = function(selector){
     return new simpleDOMEngine(selector);
   };
-  
+
+  /**
+   * Returns $ to its original value in case
+   * we're trampling the variable
+   *
+   * Returns a clean instance of our application
+   * for your own variable.
+   *
+   * @return {object}
+   */
+  simpleDOM.noConflict = function(){
+    if ( window.$ === window.simpleDOM ){
+      window.$ = _$;
+    }
+    return window.simpleDOM;
+  };
+
+  // Wrapping object of any passed selector
   var simpleDOMEngine = function(selector){
-    
+
     this._raw_selector = selector;
 
     var _matches = [];
@@ -31,7 +49,8 @@
       if( 'querySelectorAll' in document ){
         _matches = document.querySelectorAll(this._raw_selector);
       }
-      // For IE7  
+      // For IE7. Won't actually use css selectors but this is better than
+      // falling over and dying.
       else {
         if( selector.indexOf("#") === 0 ){
           _matches = [ document.getElementById( selector.replace('#','') ) ];
@@ -40,16 +59,13 @@
         }
       }
     }
-    
     return this;
-    
   };
-  
+
   simpleDOMEngine.prototype = {
 
     // store selector
     _raw_selector: false,
-    
 
     /**
      * Returns a wrapper instance of a single
@@ -60,7 +76,6 @@
     get: function(k){
         return new simpleDOMEngine(this[k]);
     },
-
 
     /**
      * Iterates every matching element and applies
@@ -76,7 +91,6 @@
       return this;
     },
 
-
     /**
      * Execute function when the document has loaded
      * @param  {[type]} closure [description]
@@ -90,7 +104,6 @@
         }
       };
     },
-
 
     /**
      * Returns an array of existing classes for an element
@@ -144,7 +157,6 @@
       return false;
     },
 
-
     /**
      * Binds eventHandler of eventType to all elements
      * matching selector.
@@ -184,7 +196,6 @@
       return this;
     },
 
-
     /**
      * Set css attribute values
      *
@@ -216,7 +227,6 @@
       this.css('display', 'block');
       return this;
     },
-
 
     /**
      * Returns the current value of an HTML attribute
@@ -252,4 +262,9 @@
       return this;
     }
   };
+
+  // map!
+  window.simpleDOM = simpleDOM;
+  window.$ = window.simpleDOM;
+
 })(this);
