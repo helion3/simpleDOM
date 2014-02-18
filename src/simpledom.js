@@ -39,27 +39,52 @@
     this._raw_selector = selector;
 
     var _matches = [];
-    if( typeof selector === "object" ){
+
+    (function(engine){
+
+      // Object
+      if( typeof selector === "object" ){
         _matches = [selector];
-    }
-    else if( typeof selector === "function" ){
-      this.ready(selector);
-    }
-    else if( typeof selector === "string" ){
-      if( 'querySelectorAll' in document ){
-        _matches = document.querySelectorAll(this._raw_selector);
+        return;
       }
-      // For IE7. Won't actually use css selectors but this is better than
-      // falling over and dying.
-      else {
+      // Doc.Ready closure
+      if( typeof selector === "function" ){
+        engine.ready(selector);
+        return;
+      }
+      // String
+      if( typeof selector === "string" ){
+
+        // New HTML element
+        if( selector.indexOf("<") === 0 ){
+          var elemName = selector.replace(/[<|>]/g, '');
+          var elem = document.createElement(elemName);
+          _matches = [elem];
+          return;
+        }
+
+        // Selector
+        if( 'querySelectorAll' in document ){
+          _matches = document.querySelectorAll(engine._raw_selector);
+          return;
+        }
+        // For IE7. Won't actually use css selectors but this is better than
+        // falling over and dying.
         if( selector.indexOf("#") === 0 ){
           _matches = [ document.getElementById( selector.replace('#','') ) ];
         } else {
           _matches = [ document.getElementsByTagName( selector ) ];
         }
       }
+    })(this);
+
+    this.length = _matches.length;
+    for (var i = 0; i < _matches.length; i++){
+        this[i] = _matches[i];
     }
+
     return this;
+
   };
 
   simpleDOMEngine.prototype = {
@@ -75,6 +100,14 @@
      */
     get: function(k){
         return new simpleDOMEngine(this[k]);
+    },
+
+    /**
+     * Navigate DOM to parent element of current
+     * @return {simpleDOMEngine}
+     */
+    parent: function(){
+      return new simpleDOMEngine(this[0].parentNode);
     },
 
     /**
@@ -236,30 +269,69 @@
      * @param attr
      * @returns {string}
      */
-    attr: function( attr, value ){
-      // @todo needs iteration
-      if( value === undefined ){
-        return this[0].getAttribute(attr);
-      } else {
-        var hasAttr = false;
-        if( 'hasAttribute' in this[0] ){
-          hasAttr = this[0].hasAttribute(attr);
-        } else {
-          hasAttr = (this[0][attr] !== undefined);
+    attr: function( attribute, newValue ){
+      for( var n = 0, l = this.length; n < l; n++ ){
+        if( newValue === undefined && typeof attribute === "string" ){
+          return this[n].getAttribute(attribute);
         }
-        if( hasAttr ){
-          if( value === '' ){
-            this[0].removeAttribute(attr);
-          } else {
-            this[0].setAttribute(attr,value);
-          }
+
+        // Build an array of attributes if not already set
+        var attrObj = {};
+        if( typeof attribute === "string" ){
+          attrObj[attribute] = newValue;
         } else {
-          var newAttr = document.createAttribute(attr);
-          newAttr.value = val;
-          this[0].setAttributeNode(newAttr);
+          attrObj = attr;
+        }
+
+        for( var a in attrObj ){
+
+          var attr = a;
+          var value = attrObj[a];
+
+          // Has attribute already?
+          var hasAttr = false;
+          if( 'hasAttribute' in this[n] ){
+            hasAttr = this[n].hasAttribute(attr);
+          } else {
+            hasAttr = (this[n][attr] !== undefined);
+          }
+          // Amend/Remove attribute
+          if( hasAttr ){
+            if( value === '' ){
+              this[n].removeAttribute(attr);
+            } else {
+              this[n].setAttribute(attr,value);
+            }
+          }
+          // Add new attribute
+          else {
+            var newAttr = document.createAttribute(attr);
+            newAttr.value = value;
+            this[n].setAttributeNode(newAttr);
+          }
         }
       }
       return this;
+    },
+
+
+    /**
+     * Append an element to an existing DOM element
+     * @param  {Node|simpleDOMEngine} element
+     * @return {object}
+     */
+    append: function( element ){
+      var self = this;
+      var appendFunc = function(){
+        self[n].appendChild( this );
+      };
+      for( var n = 0, l = this.length; n < l; n++ ){
+        if( element instanceof simpleDOMEngine ){
+          element.each(appendFunc);
+        } else {
+          this[n].appendChild( element );
+        }
+      }
     }
   };
 
