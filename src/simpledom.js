@@ -73,7 +73,7 @@
         if( selector.indexOf("#") === 0 ){
           _matches = [ document.getElementById( selector.replace('#','') ) ];
         } else {
-          _matches = [ document.getElementsByTagName( selector ) ];
+          _matches = document.getElementsByTagName( selector );
         }
       }
     })(this);
