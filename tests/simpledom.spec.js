@@ -36,3 +36,30 @@ describe('basic selectors', function(){
   });
 
 });
+
+
+// CSS Class tests
+describe('css class manipulation', function(){
+
+  document.body.innerHTML = window.__html__['tests/fixtures/ul.html'];
+
+  it("ul starts with no class", function() {
+    expect($('ul').hasClass('jasmine')).toBe(false);
+  });
+
+  it("ul now has class 'jasmine'", function() {
+    $('ul').addClass('jasmine');
+    expect($('ul').hasClass('jasmine')).toBe(true);
+  });
+
+  it("getClasses returns an array with current class", function() {
+    $('ul').addClass('karma');
+    expect($('ul').getClasses()).toEqual(['jasmine','karma']);
+  });
+
+  it("ul now has no class 'jasmine'", function() {
+    $('ul').removeClass('jasmine');
+    expect($('ul').hasClass('jasmine')).toBe(false);
+  });
+
+});

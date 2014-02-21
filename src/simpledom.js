@@ -144,6 +144,9 @@
      * @return {[type]}      [description]
      */
     getClasses: function( elem ){
+      if( typeof elem === 'undefined' && this.length >= 1 ){
+        elem = this[0];
+      }
       return (elem.className !== "" ? elem.className.split(' ') : []);
     },
     /**
@@ -185,7 +188,7 @@
     hasClass: function( className ){
       var regex = new RegExp('(?:^|\\s)'+className+'(?!\\S)');
       if( this.length >= 1 ){
-        return this[0].className.match( regex ) || false;
+        return (this[0].className.match( regex ) !== null) || false;
       }
       return false;
     },
