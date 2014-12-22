@@ -245,6 +245,36 @@
       }
       return this;
     },
+    /** 
+     * Get the inner HTML of an object
+     * with first argument provided, sets the inner HTML of an object.
+     * @param html string, optional; HTML to insert inside object
+     * @returns innerHTML | simpleDOM
+     */
+    html: function(html){
+      for( var n = 0, l = this.length; n < l; n++){
+        if(html === false || html === undefined){
+          return this[n].innerHTML;
+        }
+        this[n].innerHTML = html;
+      }   
+      return this;
+    },  
+    /**
+     * Get the value of an input object
+     * with first argument provided, set the value.
+     * @param value string, optional; value to set input object to.
+     * @returns string | simpleDOM
+     */
+    value: function(value){
+      for( var n = 0, l = this.length; n < l; n++){
+        if(value === false || value === undefined){
+          return this[n].value;
+        }
+        this[n].value = value; 
+      }
+      return this;
+    },
     /**
      * Short-cut for hiding an element
      *
@@ -317,6 +347,16 @@
       return this;
     },
 
+    /**
+     * Remove elements from the page.
+     * @returns simpleDOM
+     */
+    remove: function(){
+      for (var n = 0, l = this.length; n < l; n++){
+        this[n].parentNode.removeChild(this[n]);
+      }
+      return this;
+    },
 
     /**
      * Append an element to an existing DOM element
